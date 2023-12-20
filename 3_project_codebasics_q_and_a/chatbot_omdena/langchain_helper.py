@@ -17,7 +17,7 @@ vectordb_file_path = "faiss_index"
 
 def create_vector_db():
     # Load data from FAQ sheet
-    loader = CSVLoader(file_path=r'C:\Users\tboyi\Projects\langchain\3_project_codebasics_q_and_a\codebasics_faqs.csv', source_column="prompt")
+    loader = CSVLoader(file_path=r'C:\Users\tboyi\Projects\langchain\3_project_codebasics_q_and_a\chatbot_omdena\team_2_final_dataset.csv', source_column="prompt", encoding='ISO-8859-1')
     data = loader.load()
 
     # Create a FAISS instance for vector database from 'data'
@@ -28,23 +28,29 @@ def create_vector_db():
     vectordb.save_local(vectordb_file_path)
 
 
-def get_qa_chain():
+def evaluate_answer():
     # Load the vector database from the local folder
     vectordb = FAISS.load_local(vectordb_file_path, instructor_embeddings)
 
     # Create a retriever for querying the vector database
     retriever = vectordb.as_retriever(score_threshold=0.7)
 
-    prompt_template = """Given the following context and a question, generate an answer based on this context only.
-    In the answer try to provide as much text as possible from "response" section in the source document context without making much changes.
-    If the answer is not found in the context, kindly state "I don't know." Don't try to make up an answer.
+    prompt_template = """given the following question , Evaluate the user-provided answer below based on its alignment with our 'response' column  in our dataset and provide consise feedback:
+    context: {question}
+    USER ANSWER: {answer}
+    
+    
+   """
 
-    CONTEXT: {context}
-
-    QUESTION: {question}"""
+    # - Assess the accuracy and relevance of the answer.
+    # - Offer brief pointers for improvement or correction if needed.
+    # - Indicate if the answer is unrelated or incorrect but avoid providing the exact response from the dataset.
+    # - If our dataset lacks a suitable response, simply state 'No data available for a detailed evaluation.'
+    
+    # Provide feedback in a brief and bullet-pointed format."""
 
     PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
+        template=prompt_template, input_variables=["context", "answer"]
     )
 
     chain = RetrievalQA.from_chain_type(llm=llm,
@@ -58,5 +64,5 @@ def get_qa_chain():
 
 if __name__ == "__main__":
     create_vector_db()
-    chain = get_qa_chain()
-    print(chain("Do you have javascript course?"))
+    chain = evaluate_answer()
+    print(chain("I had a difficult client, but I couldn't do much about it. It was a tough situation."))

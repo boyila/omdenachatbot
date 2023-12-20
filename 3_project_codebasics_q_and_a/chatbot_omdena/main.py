@@ -1,5 +1,5 @@
 import streamlit as st
-from langchain_helper import get_qa_chain
+from langchain_helper import evaluate_answer
 from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
@@ -12,8 +12,8 @@ st.title("INTERVIEW CHATBOT 🤖")
 
 
 # Load the CSV file into a DataFrame and select a random prompt
-df = pd.read_csv(r'C:\Users\tboyi\Projects\langchain\3_project_codebasics_q_and_a\codebasics_faqs.csv', encoding='cp1252')  # Or try 'iso-8859-1', 'latin1', 'cp1252' if 'utf-8' doesn't work
-random_question = random.choice(df['prompt'].tolist())
+df = pd.read_csv(r'C:\Users\tboyi\Projects\langchain\3_project_codebasics_q_and_a\chatbot_omdena\team_2_final_dataset.csv', encoding='ISO-8859-1')  # Or try 'iso-8859-1', 'latin1', 'cp1252' if 'utf-8' doesn't work
+random_question = random.choice(df['promptq'].tolist())
 
 # Initialize session state for button label, question text, answer text, and listening state
 if 'button_label' not in st.session_state:
@@ -104,7 +104,7 @@ question = st.text_area("Answer:", value=st.session_state['question'], key="ques
 # Process the question and display the answer
 def process_question():
     if st.session_state['question']:
-        chain = get_qa_chain()
+        chain = evaluate_answer()
         response = chain(st.session_state['question'])
         st.session_state['answer'] = response["result"]
         # st.session_state['question'] = ""  # Clear the question to prevent reprocessing it
@@ -114,7 +114,6 @@ def process_question():
 # Button to trigger the answer generation
 if st.button('Submit'):
     process_question()
-
 
 # Display the answer
 if 'answer' in st.session_state and st.session_state['answer']:
