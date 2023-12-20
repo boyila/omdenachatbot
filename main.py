@@ -12,7 +12,7 @@ st.title("INTERVIEW CHATBOT 🤖")
 
 
 # Load the CSV file into a DataFrame and select a random prompt
-df = pd.read_csv(r'C:\Users\tboyi\Projects\langchain\3_project_codebasics_q_and_a\chatbot_omdena\team_2_final_dataset.csv', encoding='ISO-8859-1')  # Or try 'iso-8859-1', 'latin1', 'cp1252' if 'utf-8' doesn't work
+df = pd.read_csv(r'C:\Users\tboyi\Projects\langchain\chatbot_omdena\team_2_final_dataset.csv', encoding='ISO-8859-1')  # Or try 'iso-8859-1', 'latin1', 'cp1252' if 'utf-8' doesn't work
 random_question = random.choice(df['promptq'].tolist())
 
 # Initialize session state for button label, question text, answer text, and listening state
